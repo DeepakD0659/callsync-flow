@@ -20,17 +20,27 @@ interface WizardProps {
 export function Wizard({ steps, onComplete, className }: WizardProps) {
   const [current, setCurrent] = useState(0);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const transitionTo = (nextIndex: number) => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    window.setTimeout(() => {
+      setCurrent(nextIndex);
+      setIsAnimating(false);
+    }, 160);
+  };
 
   const goNext = () => {
     const step = steps[current];
     if (step.validate && !step.validate()) return;
     setCompleted((prev) => new Set(prev).add(current));
-    if (current < steps.length - 1) setCurrent(current + 1);
+    if (current < steps.length - 1) transitionTo(current + 1);
     else onComplete?.();
   };
 
   const goBack = () => {
-    if (current > 0) setCurrent(current - 1);
+    if (current > 0) transitionTo(current - 1);
   };
 
   return (
@@ -40,7 +50,7 @@ export function Wizard({ steps, onComplete, className }: WizardProps) {
         {steps.map((step, i) => (
           <div key={step.id} className="flex items-center flex-1 last:flex-none">
             <button
-              onClick={() => i < current && setCurrent(i)}
+              onClick={() => i < current && transitionTo(i)}
               className={cn(
                 "flex items-center gap-2 transition-all",
                 i < current && "cursor-pointer",
@@ -74,7 +84,7 @@ export function Wizard({ steps, onComplete, className }: WizardProps) {
       </div>
 
       {/* Step Content with transition */}
-      <div className="animate-in-up" key={current}>
+      <div className={cn("animate-in-up transition-opacity", isAnimating && "opacity-60")} key={current}>
         {steps[current].content}
       </div>
 

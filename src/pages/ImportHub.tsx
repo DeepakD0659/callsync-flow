@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { Wizard, type WizardStep } from "@/components/Wizard";
-import { importBatches, agents, clients } from "@/lib/mock-data";
+import { agents, importBatches } from "@/lib/mock-data";
 import { Upload, FileSpreadsheet, CheckCircle, XCircle, Link2, Link2Off, AlertTriangle, Lightbulb, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useAppData } from "@/contexts/AppDataContext";
+import { useNavigate } from "react-router-dom";
 
 function UploadStep() {
   return (
@@ -205,6 +207,9 @@ function FinishStep() {
 }
 
 export default function ImportHub() {
+  const { runImport } = useAppData();
+  const navigate = useNavigate();
+
   const wizardSteps: WizardStep[] = [
     { id: "upload", label: "Upload", content: <UploadStep /> },
     { id: "mapping", label: "Mapping", content: <MappingStep /> },
@@ -221,7 +226,13 @@ export default function ImportHub() {
         </p>
 
         <div className="animate-in-up" style={{ animationDelay: "80ms" }}>
-          <Wizard steps={wizardSteps} onComplete={() => {}} />
+          <Wizard
+            steps={wizardSteps}
+            onComplete={async () => {
+              await runImport();
+              navigate("/clients");
+            }}
+          />
         </div>
 
         {/* Import History */}

@@ -5,6 +5,7 @@ import { Bell, Moon, Sun, Waves, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme, type ThemeName } from "@/contexts/ThemeContext";
+import { useAppData } from "@/contexts/AppDataContext";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -13,6 +14,7 @@ const themeIcons: Record<ThemeName, typeof Sun> = { light: Sun, dark: Moon, bank
 
 export function AppLayout({ children, title }: { children: React.ReactNode; title?: string }) {
   const { theme, setTheme } = useTheme();
+  const { role, setRole, loading, error } = useAppData();
   const ThemeIcon = themeIcons[theme];
 
   return (
@@ -44,6 +46,15 @@ export function AppLayout({ children, title }: { children: React.ReactNode; titl
                 </DropdownMenuContent>
               </DropdownMenu>
 
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setRole(role === "ADMIN" ? "AGENT" : "ADMIN")}
+              >
+                {role}
+              </Button>
+
               <Button variant="ghost" size="icon" className="relative h-8 w-8">
                 <Bell className="h-4 w-4" />
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
@@ -54,7 +65,13 @@ export function AppLayout({ children, title }: { children: React.ReactNode; titl
             </div>
           </header>
           <main className="flex-1 overflow-auto p-6">
-            {children}
+            {loading ? (
+              <div className="h-[55vh] flex items-center justify-center text-sm text-muted-foreground">Loading workspace...</div>
+            ) : error ? (
+              <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{error}</div>
+            ) : (
+              children
+            )}
           </main>
         </div>
       </div>

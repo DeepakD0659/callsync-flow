@@ -1,9 +1,10 @@
 import {
   LayoutDashboard, Users, PhoneCall, Upload, UserCheck,
-  BarChart3, Settings, LogOut, Shield, HelpCircle,
+  BarChart3, Settings, LogOut, HelpCircle,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { useAppData } from "@/contexts/AppDataContext";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
@@ -11,39 +12,32 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
-const adminItems = [
+const baseItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "Worklists", url: "/assignments", icon: UserCheck },
-  { title: "Import & Assign", url: "/import", icon: Upload },
-  { title: "Clients", url: "/clients", icon: Users },
+  { title: "Directory", url: "/clients", icon: Users },
+  { title: "Assignments", url: "/assignments", icon: UserCheck },
   { title: "Analytics", url: "/performance", icon: BarChart3 },
 ];
 
+const adminOnlyItems = [
+  { title: "Ingestion Hub", url: "/import", icon: Upload },
+];
+
 const agentItems = [
-  { title: "My Queue", url: "/queue", icon: PhoneCall },
+  { title: "Queue", url: "/queue", icon: PhoneCall },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { role } = useAppData();
   const isActive = (path: string) => location.pathname === path;
+  const adminItems = role === "ADMIN" ? [...baseItems, ...adminOnlyItems] : baseItems;
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 shadow-lg shadow-primary/20">
-            <Shield className="h-5 w-5 text-primary-foreground" />
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-foreground tracking-tight">Recovery Pro</span>
-              <span className="text-[10px] text-muted-foreground font-medium">Financial Architect v1.0</span>
-            </div>
-          )}
-        </div>
-      </SidebarHeader>
+      <SidebarHeader className="h-3 p-0" />
 
       <SidebarContent>
         <SidebarGroup>
