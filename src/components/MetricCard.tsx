@@ -16,18 +16,18 @@ export function MetricCard({ title, value, change, changeType = "neutral", icon:
   return (
     <div
       className={cn(
-        "animate-in-up rounded-xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md",
+        "animate-in-up rounded-2xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5",
         className
       )}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-start justify-between">
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="text-2xl font-semibold tabular-nums tracking-tight">{value}</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</p>
+          <p className="text-2xl font-bold tabular-nums tracking-tight">{value}</p>
           {change && (
             <p className={cn(
-              "text-xs font-medium",
+              "text-xs font-semibold",
               changeType === "positive" && "text-success",
               changeType === "negative" && "text-destructive",
               changeType === "neutral" && "text-muted-foreground"
@@ -36,7 +36,7 @@ export function MetricCard({ title, value, change, changeType = "neutral", icon:
             </p>
           )}
         </div>
-        <div className={cn("rounded-lg p-2.5", iconColor || "bg-primary/10")}>
+        <div className={cn("rounded-xl p-3", iconColor || "bg-primary/10")}>
           <Icon className={cn("h-5 w-5", iconColor ? "text-card" : "text-primary")} />
         </div>
       </div>
